@@ -1,9 +1,15 @@
-const fetchCategories = require("../models/app-models");
+const { fetchCategories, fetchReviews } = require("../models/app-models");
 
-const getCategories = (req, res) => {
-  fetchCategories().then((result) =>
-    res.status(200).send({ categories: result })
-  );
+const getCategories = (req, res, next) => {
+  fetchCategories()
+    .then((result) => res.status(200).send({ categories: result }))
+    .catch(next);
 };
 
-module.exports = getCategories;
+const getReviews = (req, res, next) => {
+  fetchReviews()
+    .then((result) => res.status(200).send({ reviews: result }))
+    .catch(next);
+};
+
+module.exports = { getCategories, getReviews };
