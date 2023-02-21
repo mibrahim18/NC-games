@@ -1,14 +1,19 @@
 const { fetchCategories, fetchReviews } = require("../models/app-models");
 
 const getCategories = (req, res, next) => {
-  console.log(2);
   fetchCategories()
     .then((result) => res.status(200).send({ categories: result }))
     .catch(next);
 };
 
-const getReviews = (req, res) => {
-  fetchReviews().then((result) => res.status(200).send({ categories: result }));
+const getReviews = (req, res, next) => {
+  fetchReviews()
+    .then((result) => res.status(200).send({ reviews: result }))
+    .catch(next);
 };
 
-module.exports = { getCategories, getReviews };
+const handle404 = (req, res, next) => {
+  res.status(404).send({ msg: "Try again - Path not found!!!" });
+};
+
+module.exports = { getCategories, getReviews, handle404 };

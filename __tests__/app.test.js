@@ -12,8 +12,13 @@ afterAll(() => {
 });
 
 describe("app", () => {
-  test("should give a 500 error for invalid path", () => {
-    return request(app).get("/api/does-not-exist").expect(404);
+  test("should give a 404 error + correct message for invalid path", () => {
+    return request(app)
+      .get("/api/does-not-exist")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Try again - Path not found!!!");
+      });
   });
 });
 
@@ -32,26 +37,36 @@ describe("GET API/categories", () => {
   });
 });
 
-// describe("GET API/reviews", () => {
-//   test("should return 200 status & an object with the 9 corresponding keys in descending order (by date)", () => {
-//     return request(app)
-//       .get("/api/reviews")
-//       .expect(200)
-//       .then(({ body }) => {
-//         body.categories.forEach((category) => {
-//           expect(category).toHaveProperty("owner");
-//           expect(category).toHaveProperty("title");
-//           expect(category).toHaveProperty("review_id");
-//           expect(category).toHaveProperty("category");
-//           expect(category).toHaveProperty("review_img_url");
-//           expect(category).toHaveProperty("created_at");
-//           expect(category).toHaveProperty("votes");
-//           expect(category).toHaveProperty("designer");
-//           expect(category).toHaveProperty("comment_count");
-//         });
-//       });
-//   });
-// });
+describe("GET API/reviews", () => {
+  test("should return 200 status & an object with the 9 corresponding keys in descending order (by date)", () => {
+    return request(app)
+      .get("/api/reviews")
+      .expect(200)
+      .then(({ body }) => {
+        body.reviews.forEach((review) => {
+          expect(review).toMatchObject({
+            owner: expect.any(String),
+            title: expect.any(String),
+            review_id: expect.any(Number),
+            review_body: expect.any(String),
+            review_img_url: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            designer: expect.any(String),
+            comment_count: expect.any(Number),
+          });
+        });
+        expect(body.reviews).toBeSorted({ descending: true });
+      });
+  });
+});
 
-// joining
-// use count function
+// owner: expect.any("String"),
+// title: expect.any("String"),
+// review_id: expect.any("Number"),
+// review: expect.any("String"),
+// review_img_url: expect.any("String"),
+// created_at: expect.any("String"),
+// votes: expect.any("Number"),
+// designer: expect.any("String"),
+// comment_count: expect.any("Number"),
