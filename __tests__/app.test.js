@@ -38,7 +38,7 @@ describe("GET API/categories", () => {
 });
 
 describe("GET API/reviews", () => {
-  test("should return 200 status & an object with the 9 corresponding keys in descending order (by date)", () => {
+  test("should return 200 status & an object with the 9 corresponding keys in descending order (by date) with the correct data tyoe", () => {
     return request(app)
       .get("/api/reviews")
       .expect(200)
@@ -56,17 +56,8 @@ describe("GET API/reviews", () => {
             comment_count: expect.any(Number),
           });
         });
-        expect(body.reviews).toBeSorted({ descending: true });
+
+        expect(body.reviews).toBeSorted("created_at", { descending: true });
       });
   });
 });
-
-// owner: expect.any("String"),
-// title: expect.any("String"),
-// review_id: expect.any("Number"),
-// review: expect.any("String"),
-// review_img_url: expect.any("String"),
-// created_at: expect.any("String"),
-// votes: expect.any("Number"),
-// designer: expect.any("String"),
-// comment_count: expect.any("Number"),

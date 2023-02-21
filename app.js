@@ -1,11 +1,8 @@
 const db = require("./db/connection");
 const express = require("express");
 const seed = require("./db/seeds/seed");
-const {
-  getCategories,
-  getReviews,
-  handle404,
-} = require("./controllers/app-controllers");
+const { getCategories, getReviews } = require("./controllers/app-controllers");
+const { handle404 } = require("./controllers/error-controllers");
 const app = express();
 
 app.get("/api/categories", getCategories);
