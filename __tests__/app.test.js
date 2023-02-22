@@ -123,6 +123,38 @@ describe("GET /api/reviews/:review_id/comments", () => {
           expect(comment).toHaveProperty("body");
           expect(comment).toHaveProperty("review_id");
         });
+        expect(body.comments).toBeSorted("created_at", { descending: true });
+      });
+  });
+  test("should return a status code of 200 and an empty array if ID exists but has no reviews", () => {
+    const reviewId = 1;
+    return request(app)
+      .get(`/api/reviews/${reviewId}/comments`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toEqual([]);
+      });
+  });
+
+  test("should get 404 if given an ID which does not exist...yet", () => {
+    const reviewId = 1002;
+    return request(app)
+      .get(`/api/reviews/${reviewId}/comments`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe(
+          `Try again - ID ${reviewId} does not exist yet!!!`
+        );
+      });
+  });
+
+  test("should get 400 error if given bad path/invalid syntax ", () => {
+    const reviewId = "apple";
+    return request(app)
+      .get(`/api/reviews/${reviewId}/comments`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "bad request" });
       });
   });
 });

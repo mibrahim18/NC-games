@@ -58,7 +58,16 @@ const fetchReviewIdComments = (req) => {
       [params.review_id]
     )
     .then(({ rows }) => {
-      return rows;
+      if (rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          message: `Try again - ID ${params.review_id} does not exist yet!!!`,
+        });
+      } else if (rows[0].comment_id === null) {
+        return [];
+      } else {
+        return rows;
+      }
     });
 };
 module.exports = {
