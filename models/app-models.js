@@ -22,4 +22,26 @@ ORDER BY created_at DESC;
     });
 };
 
-module.exports = { fetchCategories, fetchReviews };
+const fetchReviewsbyId = (req) => {
+  const { params } = req;
+  return db
+    .query(
+      `
+  SELECT * FROM reviews WHERE review_id = $1;`,
+      [params.review_id]
+    )
+    .then(({ rows }) => {
+      console.log(rows);
+      if (rows.length === 0) {
+        console.log("We Made IT!");
+        return Promise.reject({
+          status: 404,
+          message: `Try again - ID ${params.review_id} does not exist yet!!!`,
+        });
+      } else {
+        return rows[0];
+      }
+    });
+};
+
+module.exports = { fetchCategories, fetchReviews, fetchReviewsbyId };

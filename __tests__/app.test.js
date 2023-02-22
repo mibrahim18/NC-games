@@ -38,7 +38,7 @@ describe("GET API/categories", () => {
 });
 
 describe("GET API/reviews", () => {
-  test("should return 200 status & an object with the 9 corresponding keys in descending order (by date) with the correct data tyoe", () => {
+  test("should return 200 status & an object with the 9 corresponding keys in descending order (by date) with the correct data type", () => {
     return request(app)
       .get("/api/reviews")
       .expect(200)
@@ -54,10 +54,57 @@ describe("GET API/reviews", () => {
             votes: expect.any(Number),
             designer: expect.any(String),
             comment_count: expect.any(Number),
+            category: expect.any(String),
           });
         });
 
         expect(body.reviews).toBeSorted("created_at", { descending: true });
+      });
+  });
+});
+
+describe("GET API/reviews/:review_id", () => {
+  test("should return 200 status & 1 review object with correct corresponding ID", () => {
+    const reviewId = 1;
+    return request(app)
+      .get(`/api/reviews/${reviewId}`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toEqual({
+          review: {
+            review_id: 1,
+            title: "Agricola",
+            designer: "Uwe Rosenberg",
+            owner: "mallionaire",
+            review_img_url:
+              "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+            review_body: "Farmyard fun!",
+            category: "euro game",
+            created_at: "2021-01-18T10:00:20.514Z",
+            votes: 1,
+          },
+        });
+      });
+  });
+  test("should get 404 if given an ID which does not exist...yet", () => {
+    const reviewId = 1001;
+    return request(app)
+      .get(`/api/reviews/${reviewId}`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe(
+          `Try again - ID ${reviewId} does not exist yet!!!`
+        );
+      });
+  });
+
+  test("should get 400 error if given bad path/invalid syntax ", () => {
+    const reviewId = "orange";
+    return request(app)
+      .get(`/api/reviews/${reviewId}`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "bad request" });
       });
   });
 });
