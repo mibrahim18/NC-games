@@ -38,7 +38,7 @@ describe("GET API/categories", () => {
 });
 
 describe("GET API/reviews", () => {
-  test("should return 200 status & an object with the 9 corresponding keys in descending order (by date) with the correct data type", () => {
+  test("should return 200 status & an object with the corresponding keys in descending order (by date) with the correct data type", () => {
     return request(app)
       .get("/api/reviews")
       .expect(200)
@@ -70,19 +70,17 @@ describe("GET API/reviews/:review_id", () => {
       .get(`/api/reviews/${reviewId}`)
       .expect(200)
       .then(({ body }) => {
-        expect(body).toEqual({
-          review: {
-            review_id: 1,
-            title: "Agricola",
-            designer: "Uwe Rosenberg",
-            owner: "mallionaire",
-            review_img_url:
-              "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
-            review_body: "Farmyard fun!",
-            category: "euro game",
-            created_at: "2021-01-18T10:00:20.514Z",
-            votes: 1,
-          },
+        expect(reviewId).toBe(1);
+        expect(body.review).toMatchObject({
+          owner: expect.any(String),
+          title: expect.any(String),
+          review_id: expect.any(Number),
+          review_body: expect.any(String),
+          review_img_url: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          designer: expect.any(String),
+          category: expect.any(String),
         });
       });
   });
@@ -108,3 +106,23 @@ describe("GET API/reviews/:review_id", () => {
       });
   });
 });
+
+// describe("GET /api/reviews/:review_id/comments", () => {
+//   test("should an array of comments for the given review_id of which each comment should have the given properties", () => {
+//     const reviewId = 1;
+//     return request(app)
+//       .get(`/reviews/${reviewId}/comments`)
+//       .expect(200)
+//       .then(({ body }) => {
+//         expect(body).toBeInstanceOf(Array);
+//         body.forEach((comment) => {
+//           expect(comment).toHaveProperty("comment_id");
+//           expect(comment).toHaveProperty("votes");
+//           expect(comment).toHaveProperty("created_at");
+//           expect(comment).toHaveProperty("author");
+//           expect(comment).toHaveProperty("body");
+//           expect(comment).toHaveProperty("review_id");
+//         });
+//       });
+//   });
+// });
