@@ -44,4 +44,27 @@ const fetchReviewsbyId = (req) => {
     });
 };
 
-module.exports = { fetchCategories, fetchReviews, fetchReviewsbyId };
+const getReviewIdComments = (req) => {
+  const { params } = req;
+  return db
+    .query(
+      `
+      SELECT reviews.* WHERE review_id = $1, 
+      CAST(COUNT(comment_id) AS INTEGER) AS comment_count 
+FROM reviews 
+LEFT JOIN comments ON comments.review_id = reviews.review_id 
+GROUP BY reviews.review_id 
+ORDER BY created_at DESC`,
+      [params.review_id]
+    )
+    .then(({ rows }) => {
+      console.log(rows);
+    });
+};
+
+module.exports = {
+  fetchCategories,
+  fetchReviews,
+  fetchReviewsbyId,
+  getReviewIdComments,
+};
