@@ -107,22 +107,22 @@ describe("GET API/reviews/:review_id", () => {
   });
 });
 
-// describe("GET /api/reviews/:review_id/comments", () => {
-//   test("should an array of comments for the given review_id of which each comment should have the given properties", () => {
-//     const reviewId = 1;
-//     return request(app)
-//       .get(`/reviews/${reviewId}/comments`)
-//       .expect(200)
-//       .then(({ body }) => {
-//         expect(body).toBeInstanceOf(Array);
-//         body.forEach((comment) => {
-//           expect(comment).toHaveProperty("comment_id");
-//           expect(comment).toHaveProperty("votes");
-//           expect(comment).toHaveProperty("created_at");
-//           expect(comment).toHaveProperty("author");
-//           expect(comment).toHaveProperty("body");
-//           expect(comment).toHaveProperty("review_id");
-//         });
-//       });
-//   });
-// });
+describe("GET /api/reviews/:review_id/comments", () => {
+  test("should an array of comments for the given review_id of which each comment should have the given properties", () => {
+    const reviewId = 2;
+    return request(app)
+      .get(`/api/reviews/${reviewId}/comments`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toBeInstanceOf(Array);
+        body.comments.forEach((comment) => {
+          expect(comment).toHaveProperty("comment_id");
+          expect(comment).toHaveProperty("votes");
+          expect(comment).toHaveProperty("created_at");
+          expect(comment).toHaveProperty("author");
+          expect(comment).toHaveProperty("body");
+          expect(comment).toHaveProperty("review_id");
+        });
+      });
+  });
+});

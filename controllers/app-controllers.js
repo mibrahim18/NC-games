@@ -31,8 +31,8 @@ const getReviewsById = (req, res, next) => {
 
 const getReviewIdComments = (req, res, next) => {
   fetchReviewIdComments(req)
-    .then((t) => {
-      console.log(t);
+    .then((comments) => {
+      res.status(200).send({ comments });
     })
     .catch((err) => {
       next(err);
