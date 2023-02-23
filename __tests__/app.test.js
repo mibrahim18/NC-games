@@ -108,7 +108,7 @@ describe("GET API/reviews/:review_id", () => {
 });
 
 describe("GET /api/reviews/:review_id/comments", () => {
-  test("should an array of comments for the given review_id of which each comment should have the given properties", () => {
+  test("should respond with an array of comments for the given review_id of which each comment should have the given properties", () => {
     const reviewId = 2;
     return request(app)
       .get(`/api/reviews/${reviewId}/comments`)
@@ -123,6 +123,14 @@ describe("GET /api/reviews/:review_id/comments", () => {
           expect(comment).toHaveProperty("body");
           expect(comment).toHaveProperty("review_id");
         });
+      });
+  });
+  test("newest comments should be firs (date descending order)", () => {
+    const reviewId = 2;
+    return request(app)
+      .get(`/api/reviews/${reviewId}/comments`)
+      .expect(200)
+      .then(({ body }) => {
         expect(body.comments).toBeSorted("created_at", { descending: true });
       });
   });
@@ -155,6 +163,108 @@ describe("GET /api/reviews/:review_id/comments", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body).toEqual({ msg: "bad request" });
+      });
+  });
+});
+describe("POST /api/reviews/:review_id/comments", () => {
+  test("should create a new comment and respond with an object of posted comment and other info", () => {
+    const review_id = 3;
+    const requestBody = {
+      username: "mallionaire",
+      body: "Posted successfully!",
+    };
+    return request(app)
+      .post(`/api/reviews/${review_id}/comments`)
+      .send(requestBody)
+      .expect(201)
+      .expect((response) => {
+        const comment = response.body.comment;
+        expect(comment.review_id).toBe(review_id);
+        expect(comment.author).toBe(requestBody.username);
+        expect(comment.body).toBe(requestBody.body);
+        expect(comment).toHaveProperty("comment_id");
+        expect(comment).toHaveProperty("votes");
+        expect(comment).toHaveProperty("created_at");
+      });
+  });
+  test("when give more than 2 properties - should respond with 201 and an object of posted comment and other info", () => {
+    const review_id = 3;
+    const requestBody = {
+      username: "mallionaire",
+      body: "Posted successfully!",
+      new: "not-here",
+    };
+    return request(app)
+      .post(`/api/reviews/${review_id}/comments`)
+      .send(requestBody)
+      .expect(201)
+      .expect((response) => {
+        const comment = response.body.comment;
+        expect(comment.review_id).toBe(review_id);
+        expect(comment.author).toBe(requestBody.username);
+        expect(comment.body).toBe(requestBody.body);
+        expect(comment).toHaveProperty("comment_id");
+        expect(comment).toHaveProperty("votes");
+        expect(comment).toHaveProperty("created_at");
+      });
+  });
+
+  test("should get 404 if given an ID which does not exist...yet", () => {
+    const reviewId = 1002;
+    const requestBody = {
+      username: "mallionaire",
+      body: "Posted successfully!",
+      new: "not-here",
+    };
+    return request(app)
+      .post(`/api/reviews/${reviewId}/comments`)
+      .send(requestBody)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Try again - Not found!!!");
+      });
+  });
+
+  test("should get 404 if given a username does not exist", () => {
+    const reviewId = 3;
+    const requestBody = {
+      username: "not-here",
+      body: "Posted successfully!",
+    };
+    return request(app)
+      .post(`/api/reviews/${reviewId}/comments`)
+      .send(requestBody)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Try again - Not found!!!");
+      });
+  });
+
+  test("should get 400 error if given bad path/invalid syntax", () => {
+    const review_id = "pear";
+    const requestBody = {
+      username: "mallionaire",
+      body: "Posted successfully!",
+    };
+    return request(app)
+      .post(`/api/reviews/${review_id}/comments`)
+      .send(requestBody)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("bad request");
+      });
+  });
+  test("should get 400 error if required field(s) are not filled in", () => {
+    const review_id = 3;
+    const requestBody = {
+      username: "mallionaire",
+    };
+    return request(app)
+      .post(`/api/reviews/${review_id}/comments`)
+      .send(requestBody)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("bad request");
       });
   });
 });

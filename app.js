@@ -4,14 +4,16 @@ const {
   getReviews,
   getReviewsById,
   getReviewIdComments,
+  postComment,
 } = require("./controllers/app-controllers");
 const {
   handle404,
-  handle400,
+  handleCustom,
   handleCustomErr,
   handle500Err,
 } = require("./controllers/error-controllers");
 const app = express();
+app.use(express.json());
 
 app.get("/api/categories", getCategories);
 
@@ -21,9 +23,11 @@ app.get("/api/reviews/:review_id", getReviewsById);
 
 app.get("/api/reviews/:review_id/comments", getReviewIdComments);
 
+app.post("/api/reviews/:review_id/comments", postComment);
+
 app.use(handle404);
 
-app.use(handle400);
+app.use(handleCustom);
 
 app.use(handleCustomErr);
 
