@@ -3,12 +3,11 @@ const handle404 = (req, res, next) => {
 };
 
 const handleCustom = (err, req, res, next) => {
-  if (err.code === "22P02") {
-    return res.status(400).send({ msg: "bad request" });
-  } else if (err.code === "23502") {
-    res.status(404).send({ msg: "Try again - ID does not exist yet!!!" });
+  if (err.code === "22P02" || err.code === "23502") {
+    console.log("line 7");
+    res.status(400).send({ msg: "bad request" });
   } else if (err.code === "23503") {
-    res.status(404).send({ msg: "Try again - Username does not exist yet!!!" });
+    res.status(404).send({ msg: "Try again - Not found!!!" });
   } else next(err);
 };
 

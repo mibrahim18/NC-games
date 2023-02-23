@@ -187,18 +187,45 @@ describe("POST /api/reviews/:review_id/comments", () => {
         expect(comment).toHaveProperty("created_at");
       });
   });
-
-  test("should get 404 if given an ID which does not exist...yet", () => {
-    const reviewId = 1002;
+  test("when give more than 2 properties - should respond with 201 and an object of posted comment and other info", () => {
+    const review_id = 3;
+    const requestBody = {
+      username: "mallionaire",
+      body: "Posted successfully!",
+      new: "not-here",
+    };
     return request(app)
-      .post(`/api/reviews/${reviewId}/comments`)
-      .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe(`Try again - ID does not exist yet!!!`);
+      .post(`/api/reviews/${review_id}/comments`)
+      .send(requestBody)
+      .expect(201)
+      .expect((response) => {
+        const comment = response.body.comment;
+        expect(comment.review_id).toBe(review_id);
+        expect(comment.author).toBe(requestBody.username);
+        expect(comment.body).toBe(requestBody.body);
+        expect(comment).toHaveProperty("comment_id");
+        expect(comment).toHaveProperty("votes");
+        expect(comment).toHaveProperty("created_at");
       });
   });
 
-  test("should get 404 if given an username does not exist", () => {
+  test("should get 404 if given an ID which does not exist...yet", () => {
+    const reviewId = 1002;
+    const requestBody = {
+      username: "mallionaire",
+      body: "Posted successfully!",
+      new: "not-here",
+    };
+    return request(app)
+      .post(`/api/reviews/${reviewId}/comments`)
+      .send(requestBody)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Try again - Not found!!!");
+      });
+  });
+
+  test("should get 404 if given a username does not exist", () => {
     const reviewId = 3;
     const requestBody = {
       username: "not-here",
@@ -209,7 +236,7 @@ describe("POST /api/reviews/:review_id/comments", () => {
       .send(requestBody)
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toEqual("Try again - Username does not exist yet!!!");
+        expect(body.msg).toEqual("Try again - Not found!!!");
       });
   });
 
@@ -218,6 +245,19 @@ describe("POST /api/reviews/:review_id/comments", () => {
     const requestBody = {
       username: "mallionaire",
       body: "Posted successfully!",
+    };
+    return request(app)
+      .post(`/api/reviews/${review_id}/comments`)
+      .send(requestBody)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("bad request");
+      });
+  });
+  test("should get 400 error if required field(s) are not filled in", () => {
+    const review_id = 3;
+    const requestBody = {
+      username: "mallionaire",
     };
     return request(app)
       .post(`/api/reviews/${review_id}/comments`)

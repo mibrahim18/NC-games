@@ -43,7 +43,9 @@ const getReviewIdComments = (req, res, next) => {
 };
 
 const postComment = (req, res, next) => {
-  insertComment(req)
+  const commentToPost = req.body;
+  const review_id = req.params.review_id;
+  insertComment(commentToPost, review_id)
     .then((comment) => {
       res.status(201).send({ comment });
     })

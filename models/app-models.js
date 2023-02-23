@@ -68,13 +68,11 @@ const fetchReviewIdComments = (params) => {
       }
     });
 };
-const insertComment = (req) => {
-  const { params } = req;
-  const { username, body } = req.body;
+const insertComment = (commentToPost, review_id) => {
   return db
     .query(
       "INSERT INTO comments (author, body, review_id) VALUES ($1, $2, $3) RETURNING *;",
-      [username, body, params.review_id]
+      [commentToPost.username, commentToPost.body, review_id]
     )
     .then(({ rows }) => {
       return rows[0];
