@@ -7,6 +7,8 @@ const handleCustom = (err, req, res, next) => {
     return res.status(400).send({ msg: "bad request" });
   } else if (err.code === "23502") {
     res.status(404).send({ msg: "Try again - ID does not exist yet!!!" });
+  } else if (err.code === "23503") {
+    res.status(404).send({ msg: "Try again - Username does not exist yet!!!" });
   } else next(err);
 };
 

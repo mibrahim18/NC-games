@@ -198,6 +198,21 @@ describe("POST /api/reviews/:review_id/comments", () => {
       });
   });
 
+  test("should get 404 if given an ID which does not exist...yet", () => {
+    const reviewId = 3;
+    const requestBody = {
+      username: "not-here",
+      body: "Posted successfully!",
+    };
+    return request(app)
+      .post(`/api/reviews/${reviewId}/comments`)
+      .send(requestBody)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Try again - Username does not exist yet!!!");
+      });
+  });
+
   test("should get 400 error if given bad path/invalid syntax", () => {
     const review_id = "pear";
     const requestBody = {
@@ -209,7 +224,7 @@ describe("POST /api/reviews/:review_id/comments", () => {
       .send(requestBody)
       .expect(400)
       .then(({ body }) => {
-        expect(body).toEqual({ msg: "bad request" });
+        expect(body.msg).toEqual("bad request");
       });
   });
 });
