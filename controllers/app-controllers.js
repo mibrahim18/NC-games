@@ -2,23 +2,18 @@ const {
   fetchCategories,
   fetchReviews,
   fetchReviewsbyId,
-  fetchReviewIdComments,
 } = require("../models/app-models");
 
 const getCategories = (req, res, next) => {
   fetchCategories()
     .then((result) => res.status(200).send({ categories: result }))
-    .catch((err) => {
-      next(err);
-    });
+    .catch(next);
 };
 
 const getReviews = (req, res, next) => {
   fetchReviews()
     .then((result) => res.status(200).send({ reviews: result }))
-    .catch((err) => {
-      next(err);
-    });
+    .catch(next);
 };
 
 const getReviewsById = (req, res, next) => {
@@ -29,19 +24,4 @@ const getReviewsById = (req, res, next) => {
     });
 };
 
-const getReviewIdComments = (req, res, next) => {
-  fetchReviewIdComments(req)
-    .then((comments) => {
-      res.status(200).send({ comments });
-    })
-    .catch((err) => {
-      next(err);
-    });
-};
-
-module.exports = {
-  getCategories,
-  getReviews,
-  getReviewsById,
-  getReviewIdComments,
-};
+module.exports = { getCategories, getReviews, getReviewsById };

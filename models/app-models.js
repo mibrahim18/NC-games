@@ -31,7 +31,9 @@ const fetchReviewsbyId = (req) => {
       [params.review_id]
     )
     .then(({ rows }) => {
+      console.log(rows);
       if (rows.length === 0) {
+        console.log("We Made IT!");
         return Promise.reject({
           status: 404,
           message: `Try again - ID ${params.review_id} does not exist yet!!!`,
@@ -42,37 +44,4 @@ const fetchReviewsbyId = (req) => {
     });
 };
 
-const fetchReviewIdComments = (req) => {
-  const { params } = req;
-  return db
-    .query(
-      `
-      SELECT comments.*, 
-      CAST(COUNT(comment_id) AS INTEGER) AS comment_count 
-      FROM reviews 
-      LEFT JOIN comments ON comments.review_id = reviews.review_id 
-      WHERE reviews.review_id = $1
-      GROUP BY comments.comment_id 
-      ORDER BY comments.created_at DESC
-      `,
-      [params.review_id]
-    )
-    .then(({ rows }) => {
-      if (rows.length === 0) {
-        return Promise.reject({
-          status: 404,
-          message: `Try again - ID ${params.review_id} does not exist yet!!!`,
-        });
-      } else if (rows[0].comment_id === null) {
-        return [];
-      } else {
-        return rows;
-      }
-    });
-};
-module.exports = {
-  fetchCategories,
-  fetchReviews,
-  fetchReviewsbyId,
-  fetchReviewIdComments,
-};
+module.exports = { fetchCategories, fetchReviews, fetchReviewsbyId };
