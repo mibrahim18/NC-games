@@ -22,8 +22,7 @@ ORDER BY created_at DESC;
     });
 };
 
-const fetchReviewsbyId = (req) => {
-  const { params } = req;
+const fetchReviewsbyId = (params) => {
   return db
     .query(
       `
@@ -42,8 +41,7 @@ const fetchReviewsbyId = (req) => {
     });
 };
 
-const fetchReviewIdComments = (req) => {
-  const { params } = req;
+const fetchReviewIdComments = (params) => {
   return db
     .query(
       `
@@ -70,9 +68,22 @@ const fetchReviewIdComments = (req) => {
       }
     });
 };
+const insertComment = (req) => {
+  const { params } = req;
+  const { username, body } = req.body;
+  return db
+    .query(
+      "INSERT INTO comments (author, body, review_id) VALUES ($1, $2, $3) RETURNING *;",
+      [username, body, params.review_id]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};
 module.exports = {
   fetchCategories,
   fetchReviews,
   fetchReviewsbyId,
   fetchReviewIdComments,
+  insertComment,
 };
