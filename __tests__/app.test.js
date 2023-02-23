@@ -198,7 +198,7 @@ describe("POST /api/reviews/:review_id/comments", () => {
       });
   });
 
-  test("should get 404 if given an ID which does not exist...yet", () => {
+  test("should get 404 if given an username does not exist", () => {
     const reviewId = 3;
     const requestBody = {
       username: "not-here",
