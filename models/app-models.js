@@ -6,7 +6,7 @@ const fetchCategories = () => {
   });
 };
 
-const fetchReviews = () => {
+const fetchReviews = (category, sort_by = "created_at", order = "desc") => {
   return db
     .query(
       `SELECT reviews.*, 
@@ -14,7 +14,7 @@ const fetchReviews = () => {
 FROM reviews 
 LEFT JOIN comments ON comments.review_id = reviews.review_id 
 GROUP BY reviews.review_id 
-ORDER BY created_at DESC;
+ORDER BY created_at ${order};
 `
     )
     .then(({ rows }) => {
@@ -26,7 +26,10 @@ const fetchReviewsbyId = (params) => {
   return db
     .query(
       `
-  SELECT * FROM reviews WHERE review_id = $1;`,
+SELECT 
+  reviews.*, 
+  (SELECT COUNT(*) FROM comments WHERE review_id = $1)::integer as comment_count 
+FROM reviews WHERE review_id = $1;`,
       [params.review_id]
     )
     .then(({ rows }) => {
@@ -78,10 +81,29 @@ const insertComment = (commentToPost, review_id) => {
       return rows[0];
     });
 };
+const updateComment = (review_id, inc_votes) => {
+  return db
+    .query(
+      "UPDATE reviews SET votes = votes + $1 WHERE review_id = $2 RETURNING *",
+      [inc_votes, review_id]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};
+
+const fetchUsers = (req, res, next) => {
+  return db.query(`SELECT * FROM users`).then(({ rows }) => {
+    return rows;
+  });
+};
+
 module.exports = {
   fetchCategories,
   fetchReviews,
   fetchReviewsbyId,
   fetchReviewIdComments,
   insertComment,
+  updateComment,
+  fetchUsers,
 };
