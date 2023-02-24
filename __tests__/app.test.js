@@ -125,7 +125,7 @@ describe("GET /api/reviews/:review_id/comments", () => {
         });
       });
   });
-  test("newest comments should be firs (date descending order)", () => {
+  test("newest comments should be first (date descending order)", () => {
     const reviewId = 2;
     return request(app)
       .get(`/api/reviews/${reviewId}/comments`)
@@ -187,7 +187,7 @@ describe("POST /api/reviews/:review_id/comments", () => {
         expect(comment).toHaveProperty("created_at");
       });
   });
-  test("when give more than 2 properties - should respond with 201 and an object of posted comment and other info", () => {
+  test("Task 7 - when given more than 2 properties - should respond with 201 and an object of posted comment and other info", () => {
     const review_id = 3;
     const requestBody = {
       username: "mallionaire",
@@ -265,6 +265,131 @@ describe("POST /api/reviews/:review_id/comments", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toEqual("bad request");
+      });
+  });
+});
+
+describe("Task 8 - PATCH /api/reviews/:review_id", () => {
+  test("should respond by adding (+1) to the votes property and return with the updated review ", () => {
+    const review_id = 3;
+    const voteChange = 1;
+    const requestBody = { inc_votes: voteChange };
+
+    return request(app)
+      .get(`/api/reviews/${review_id}`)
+      .then((originalReview) => {
+        const originalVoteCount = originalReview.body.review.votes;
+        return request(app)
+          .patch(`/api/reviews/${review_id}`)
+          .send(requestBody)
+          .expect(200)
+          .then(({ body }) => {
+            const expectedVoteCount = originalVoteCount + voteChange;
+            expect(body.review.votes).toBe(expectedVoteCount);
+          });
+      });
+  });
+  test("should respond by decreasing (-1) the votes property and return with the updated review  ", () => {
+    const review_id = 3;
+    const voteChange = -1;
+    const requestBody = { inc_votes: voteChange };
+
+    return request(app)
+      .get(`/api/reviews/${review_id}`)
+      .then((originalReview) => {
+        const originalVoteCount = originalReview.body.review.votes;
+        return request(app)
+          .patch(`/api/reviews/${review_id}`)
+          .send(requestBody)
+          .expect(200)
+          .then(({ body }) => {
+            const expectedVoteCount = originalVoteCount + voteChange;
+            expect(body.review.votes).toBe(expectedVoteCount);
+          });
+      });
+  });
+  test("should get 404 if given an ID which does not exist...yet", () => {
+    const review_id = 1002;
+    const voteChange = 1;
+    const requestBody = { inc_votes: voteChange };
+    return request(app)
+      .patch(`/api/reviews/${review_id}/comments`)
+      .send(requestBody)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Try again - Path not found!!!");
+      });
+  });
+  test("should get 400 error if ID id invalid/bad", () => {
+    const review_id = "banana";
+    const voteChange = 1;
+    const requestBody = { inc_votes: voteChange };
+    return request(app)
+      .post(`/api/reviews/${review_id}/comments`)
+      .send(requestBody)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("bad request");
+      });
+  });
+
+  test("should get 400 error if required field(s) are not filled in", () => {
+    const review_id = 3;
+    const requestBody = {
+      username: "mallionaire",
+    };
+    return request(app)
+      .post(`/api/reviews/${review_id}/comments`)
+      .send(requestBody)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("bad request");
+      });
+  });
+});
+
+describe("Task 9 -  GET /api/users", () => {
+  test("should return 200 status & an array of objects", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toHaveLength(4);
+        body.forEach((review) => {
+          expect(review).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
+      });
+  });
+});
+
+describe("Task 11 - GET /api/reviews/:review_id (comment_count)", () => {
+  test("should return a review object with a property of  comment count", () => {
+    const review_id = 3;
+
+    return request(app)
+      .get(`/api/reviews/${review_id}`)
+      .expect(200)
+      .then((response) => {
+        const commentCount = response.body.review;
+        expect(commentCount).toHaveProperty("comment_count");
+        expect(typeof commentCount.comment_count).toBe("number");
+      });
+  });
+
+  test("should return a 404 error for review id which does not exist yet", () => {
+    const review_id = 1902;
+
+    return request(app)
+      .get(`/api/reviews/${review_id}`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe(
+          `Try again - ID ${review_id} does not exist yet!!!`
+        );
       });
   });
 });

@@ -5,6 +5,8 @@ const {
   getReviewsById,
   getReviewIdComments,
   postComment,
+  patchComment,
+  getUsers,
 } = require("./controllers/app-controllers");
 const {
   handle404,
@@ -23,7 +25,11 @@ app.get("/api/reviews/:review_id", getReviewsById);
 
 app.get("/api/reviews/:review_id/comments", getReviewIdComments);
 
+app.get("/api/users", getUsers);
+
 app.post("/api/reviews/:review_id/comments", postComment);
+
+app.patch("/api/reviews/:review_id", patchComment);
 
 app.use(handle404);
 
