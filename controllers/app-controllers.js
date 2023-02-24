@@ -4,7 +4,8 @@ const {
   fetchReviewsbyId,
   fetchReviewIdComments,
   insertComment,
-  removeComment,
+  updateComment,
+  fetchUsers,
 } = require("../models/app-models");
 
 const getCategories = (req, res, next) => {
@@ -56,21 +57,35 @@ const postComment = (req, res, next) => {
     });
 };
 
-const deleteComment = (req, res, next) => {
-  const { params } = req;
-  removeComment(params)
-    .then((deletedComment) => {
-      res.status(204).send({});
+const patchComment = (req, res, next) => {
+  const { review_id } = req.params;
+  const { inc_votes } = req.body;
+  updateComment(review_id, inc_votes)
+    .then((review) => {
+      res.status(200).send({ review });
     })
     .catch((err) => {
       next(err);
     });
 };
+
+const getUsers = (req, res, next) => {
+  fetchUsers()
+    .then((rows) => {
+      console.log(rows);
+      res.status(200).send(rows);
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
 module.exports = {
   getCategories,
   getReviews,
   getReviewsById,
   getReviewIdComments,
   postComment,
-  deleteComment,
+  patchComment,
+  getUsers,
 };
