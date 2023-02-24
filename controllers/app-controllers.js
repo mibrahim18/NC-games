@@ -61,11 +61,10 @@ const patchComment = (req, res, next) => {
   const { review_id } = req.params;
   const { inc_votes } = req.body;
   updateComment(review_id, inc_votes)
-    .then((rows) => {
-      res.status(200).send({ rows });
+    .then((review) => {
+      res.status(200).send({ review });
     })
     .catch((err) => {
-      console.log(err, "controllers err");
       next(err);
     });
 };
@@ -73,6 +72,7 @@ const patchComment = (req, res, next) => {
 const getUsers = (req, res, next) => {
   fetchUsers()
     .then((rows) => {
+      console.log(rows);
       res.status(200).send(rows);
     })
     .catch((err) => {

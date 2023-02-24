@@ -285,7 +285,7 @@ describe("Task 8 - PATCH /api/reviews/:review_id", () => {
           .expect(200)
           .then(({ body }) => {
             const expectedVoteCount = originalVoteCount + voteChange;
-            expect(body.rows.votes).toBe(expectedVoteCount);
+            expect(body.review.votes).toBe(expectedVoteCount);
           });
       });
   });
@@ -304,7 +304,7 @@ describe("Task 8 - PATCH /api/reviews/:review_id", () => {
           .expect(200)
           .then(({ body }) => {
             const expectedVoteCount = originalVoteCount + voteChange;
-            expect(body.rows.votes).toBe(expectedVoteCount);
+            expect(body.review.votes).toBe(expectedVoteCount);
           });
       });
   });
@@ -318,6 +318,18 @@ describe("Task 8 - PATCH /api/reviews/:review_id", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Try again - Path not found!!!");
+      });
+  });
+  test("should get 400 error if ID id invalid/bad", () => {
+    const review_id = "banana";
+    const voteChange = 1;
+    const requestBody = { inc_votes: voteChange };
+    return request(app)
+      .post(`/api/reviews/${review_id}/comments`)
+      .send(requestBody)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("bad request");
       });
   });
 
@@ -342,6 +354,7 @@ describe("Task 9 -  GET /api/users", () => {
       .get("/api/users")
       .expect(200)
       .then(({ body }) => {
+        expect(body).toHaveLength(4);
         body.forEach((review) => {
           expect(review).toMatchObject({
             username: expect.any(String),
