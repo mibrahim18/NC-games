@@ -4,6 +4,7 @@ const {
   fetchReviewsbyId,
   fetchReviewIdComments,
   insertComment,
+  removeComment,
 } = require("../models/app-models");
 
 const getCategories = (req, res, next) => {
@@ -54,10 +55,22 @@ const postComment = (req, res, next) => {
       next(err);
     });
 };
+
+const deleteComment = (req, res, next) => {
+  const { params } = req;
+  removeComment(params)
+    .then((deletedComment) => {
+      res.status(204).send({});
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
 module.exports = {
   getCategories,
   getReviews,
   getReviewsById,
   getReviewIdComments,
   postComment,
+  deleteComment,
 };

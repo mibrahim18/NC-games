@@ -318,4 +318,56 @@ describe("Task 10 - GET /api/reviews (queries)", () => {
         );
       });
   });
+  test("should return a 400 error if order query is invalid", () => {
+    const sort_by = "invalid";
+    return request(app)
+      .get(`/api/reviews?sort_by=${sort_by}`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe(`bad request`);
+      });
+  });
+  test("should return a 400 error if order query is invalid", () => {
+    const order = "invalid";
+    return request(app)
+      .get(`/api/reviews?order=${order}`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe(`bad request`);
+      });
+  });
+  test.skip("responds with reviews filtered by category if category query is provided", () => {
+    const category = "children's games";
+    return request(app)
+      .get(`/api/reviews?category=${category}`)
+      .expect(200)
+      .then(({ body }) => {
+        console.log(body);
+        expect(body.reviews.length).toBe(1);
+        expect(body.reviews[0].category).toBe(category);
+      });
+  });
+});
+
+describe("DELETE /api/comments/:comment_id", () => {
+  test("deletes the comment by comment id and responds with status 204", () => {
+    const comment_id = 3;
+    return request(app)
+      .delete(`/api/comments/${comment_id}`)
+      .expect(204)
+      .then(({ body }) => {
+        expect(body).toEqual({});
+      });
+  });
+  test("return an error if comment id does not exist", () => {
+    const comment_id = 18;
+    return request(app)
+      .delete(`/api/comments/${comment_id}`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe(
+          `Try again - ID ${comment_id} does not exist!!!`
+        );
+      });
+  });
 });

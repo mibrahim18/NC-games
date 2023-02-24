@@ -7,27 +7,12 @@ const fetchCategories = () => {
 };
 
 const fetchReviews = (category, sort_by, order) => {
-  const validCols = [
-    "review_id",
-    "title",
-    "designer",
-    "owner",
-    "category",
-    "review_body",
-    "review_img_url",
-    "created_at",
-    "votes",
-    "comment_count",
-  ];
-  const validQueriesSort = sort_by ? `${sort_by}` : "created_at";
-  const validQueriesOrder = `${order}` || "DESC";
-  const validQueriesCategory = `WHERE category = ${category}` || "";
   const queryValues = [];
   let queryStr = `
-  SELECT reviews.*, 
-  CAST(COUNT(comment_id) AS INTEGER) AS comment_count 
-  FROM reviews 
-  LEFT JOIN comments ON comments.review_id = reviews.review_id`;
+    SELECT reviews.*, 
+    CAST(COUNT(comment_id) AS INTEGER) AS comment_count 
+    FROM reviews 
+    LEFT JOIN comments ON comments.review_id = reviews.review_id`;
 
   if (category) {
     queryValues.push(category);
@@ -35,8 +20,8 @@ const fetchReviews = (category, sort_by, order) => {
   }
 
   queryStr += `
-  GROUP BY reviews.review_id
-`;
+    GROUP BY reviews.review_id
+  `;
 
   if (sort_by) {
     queryStr += ` ORDER BY ${sort_by}`;
@@ -118,10 +103,33 @@ const insertComment = (commentToPost, review_id) => {
       return rows[0];
     });
 };
+
+const removeComment = (params) => {
+  return db
+    .query(
+      `
+  DELETE FROM comments
+WHERE comment_id=$1
+RETURNING *
+  `,
+      [params.comment_id]
+    )
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          message: `Try again - ID ${params.comment_id} does not exist!!!`,
+        });
+      } else {
+        return rows;
+      }
+    });
+};
 module.exports = {
   fetchCategories,
   fetchReviews,
   fetchReviewsbyId,
   fetchReviewIdComments,
   insertComment,
+  removeComment,
 };

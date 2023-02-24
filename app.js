@@ -5,6 +5,7 @@ const {
   getReviewsById,
   getReviewIdComments,
   postComment,
+  deleteComment,
 } = require("./controllers/app-controllers");
 const {
   handle404,
@@ -24,6 +25,8 @@ app.get("/api/reviews/:review_id", getReviewsById);
 app.get("/api/reviews/:review_id/comments", getReviewIdComments);
 
 app.post("/api/reviews/:review_id/comments", postComment);
+
+app.delete("/api/comments/:comment_id", deleteComment);
 
 app.use(handle404);
 
