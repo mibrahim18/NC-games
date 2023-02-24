@@ -268,3 +268,54 @@ describe("POST /api/reviews/:review_id/comments", () => {
       });
   });
 });
+describe("Task 10 - GET /api/reviews (queries)", () => {
+  test("should responds with all reviews if no queries are provided", () => {
+    return request(app)
+      .get("/api/reviews")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.reviews.length).toBe(13);
+      });
+  });
+  test("responds with reviews filtered by category if category query is provided", () => {
+    const category = "dexterity";
+    return request(app)
+      .get(`/api/reviews?category=${category}`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.reviews.length).toBe(1);
+        expect(body.reviews[0].category).toBe(category);
+      });
+  });
+  test("responds with reviews sorted by specified column", () => {
+    const column = "title";
+    return request(app)
+      .get(`/api/reviews?sort_by=${column}`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.reviews.length).toBe(13);
+        expect(body.reviews).toBeSorted(column, { descending: true });
+      });
+  });
+  test("responds with reviews sorted in specified order", () => {
+    const order = "asc";
+    return request(app)
+      .get(`/api/reviews?order=${order}`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.reviews.length).toBe(13);
+        expect(body.reviews).toBeSorted("created_at", { descending: true });
+      });
+  });
+  test("should return a 404 error if category query is invalid", () => {
+    const category = "not-here";
+    return request(app)
+      .get(`/api/reviews?category=${category}`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe(
+          `Try again -  ${category} does not exist yet!!!`
+        );
+      });
+  });
+});

@@ -15,7 +15,8 @@ const getCategories = (req, res, next) => {
 };
 
 const getReviews = (req, res, next) => {
-  fetchReviews()
+  const { category, sort_by, order } = req.query;
+  fetchReviews(category, sort_by, order)
     .then((result) => res.status(200).send({ reviews: result }))
     .catch((err) => {
       next(err);
@@ -50,7 +51,6 @@ const postComment = (req, res, next) => {
       res.status(201).send({ comment });
     })
     .catch((err) => {
-      console.log(err);
       next(err);
     });
 };
