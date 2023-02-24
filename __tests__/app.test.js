@@ -359,7 +359,7 @@ describe("DELETE /api/comments/:comment_id", () => {
         expect(body).toEqual({});
       });
   });
-  test("return an error if comment id does not exist", () => {
+  test("test -return an error if comment id does not exist", () => {
     const comment_id = 18;
     return request(app)
       .delete(`/api/comments/${comment_id}`)
