@@ -30,5 +30,105 @@
         }
       ]
     }
+  },
+  "GET /api/reviews/:review_id/comments": {
+    "description": "serves anan array of comments for the given review_id ",
+    "queries": [],
+    "exampleResponse": {
+      "review": {
+        "review_id": 1,
+        "title": "Agricola",
+        "category": "euro game",
+        "designer": "Uwe Rosenberg",
+        "owner": "mallionaire",
+        "review_body": "Farmyard fun!",
+        "review_img_url": "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+        "created_at": "2021-01-18T10:00:20.514Z",
+        "votes": 1
+      }
+    }
+  },
+  "GET /api/reviews/:review_id:review_id/comments": {
+    "description": "serves an object with a singer review specified by review_id parameter",
+    "queries": [],
+    "exampleResponse": {
+      "comments": [
+        {
+          "comment_id": 5,
+          "body": "Now this is a story all about how, board games turned my life upside down",
+          "review_id": 2,
+          "author": "mallionaire",
+          "votes": 13,
+          "created_at": "2021-01-18T10:24:05.410Z",
+          "comment_count": 1
+        },
+        {
+          "comment_id": 1,
+          "body": "I loved this game too!",
+          "review_id": 2,
+          "author": "bainesface",
+          "votes": 16,
+          "created_at": "2017-11-22T12:43:33.389Z",
+          "comment_count": 1
+        },
+        {
+          "comment_id": 4,
+          "body": "EPIC board game!",
+          "review_id": 2,
+          "author": "bainesface",
+          "votes": 16,
+          "created_at": "2017-11-22T12:36:03.389Z",
+          "comment_count": 1
+        }
+      ]
+    }
+  },
+  "POST /api/reviews/:review_id/comments": {
+    "description": "Request body accepts an object with the properties of username and body and responds with the posted comment",
+    "queries": [],
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 7,
+        "body": "Posted successfully!",
+        "review_id": 3,
+        "author": "mallionaire",
+        "votes": 0,
+        "created_at": "2023-02-27T02:42:40.890Z"
+      }
+    }
+  },
+  "PATCH /api/reviews/:review_id": {
+    "description": "Request body accepts an object in the form { inc_votes: newVote } newVote will indicate how much the votes property in the database should be updated by - can increment or decrement property",
+    "queries": [],
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 7,
+        "body": "Posted successfully!",
+        "review_id": 3,
+        "author": "mallionaire",
+        "votes": 0,
+        "created_at": "2023-02-27T02:42:40.890Z"
+      }
+    }
+  },
+  "GET  /api/users": {
+    "description": "an array of objects with username, name and url properties",
+    "queries": [],
+    "exampleResponse": {
+      "review": {
+        "username": "dav3rid",
+        "name": "dave",
+        "avatar_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png"
+      }
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "delete the given comment by comment_id",
+    "queries": [],
+    "exampleResponse": {
+      "reponse": {
+        "response": "status 204 and no content"
+      }
+    }
   }
 }
