@@ -4,11 +4,13 @@
 
 We will be building an API for the purpose of accessing application data programmatically. The intention here is to mimic the building of a real world backend service (such as reddit) which should provide this information to the front end architecture.
 
+API link - https://team-a.onrender.com
+
 Your database will be PSQL, and you will interact with it using [node-postgres](https://node-postgres.com/).
 
 ## Kanban
 
-### Link to your Trello Board here: https://trello.com/b/gBtX4GN3/be-nc-games
+### Link to your Trello Board here: https://trello.com/b/WDY0h1mv
 
 As .env.\* is added to the .gitignore, anyone who wishes to clone the repo will not have access to the necessary environment variables.
 
