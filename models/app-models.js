@@ -51,7 +51,10 @@ const fetchReviewsbyId = (params) => {
   return db
     .query(
       `
-  SELECT * FROM reviews WHERE review_id = $1;`,
+      SELECT 
+      reviews.*, 
+      (SELECT COUNT(*) FROM comments WHERE review_id = $1)::integer as comment_count 
+    FROM reviews WHERE review_id = $1;`,
       [params.review_id]
     )
     .then(({ rows }) => {
@@ -125,6 +128,23 @@ RETURNING *
       }
     });
 };
+const updateComment = (review_id, inc_votes) => {
+  return db
+    .query(
+      "UPDATE reviews SET votes = votes + $1 WHERE review_id = $2 RETURNING *",
+      [inc_votes, review_id]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};
+
+const fetchUsers = (req, res, next) => {
+  return db.query(`SELECT * FROM users`).then(({ rows }) => {
+    return rows;
+  });
+};
+
 module.exports = {
   fetchCategories,
   fetchReviews,
@@ -132,4 +152,6 @@ module.exports = {
   fetchReviewIdComments,
   insertComment,
   removeComment,
+  updateComment,
+  fetchUsers,
 };
