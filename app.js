@@ -9,6 +9,7 @@ const {
   deleteComment,
   patchComment,
   getUsers,
+  getApi,
 } = require("./controllers/app-controllers");
 const {
   handle404,
@@ -19,6 +20,8 @@ const {
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+app.get("/api", getApi);
 
 app.get("/api/categories", getCategories);
 

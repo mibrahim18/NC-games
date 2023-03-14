@@ -7,7 +7,14 @@ const {
   removeComment,
   updateComment,
   fetchUsers,
+  fetchApi,
 } = require("../models/app-models");
+
+const getApi = (request, response, next) => {
+  fetchApi().then((listOfApis) => {
+    response.status(200).send(listOfApis);
+  });
+};
 
 const getCategories = (req, res, next) => {
   fetchCategories()
@@ -100,4 +107,5 @@ module.exports = {
   deleteComment,
   patchComment,
   getUsers,
+  getApi,
 };

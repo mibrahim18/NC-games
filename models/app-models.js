@@ -1,5 +1,14 @@
 const db = require("../db/connection");
 
+const fs = require("fs/promises");
+
+const fetchApi = () => {
+  return fs.readFile(`./endpoints.json`).then((data) => {
+    const endpoints = JSON.parse(data);
+    return { endpoints };
+  });
+};
+
 const fetchCategories = () => {
   return db.query(`SELECT * FROM categories`).then(({ rows }) => {
     return rows;
@@ -154,4 +163,5 @@ module.exports = {
   removeComment,
   updateComment,
   fetchUsers,
+  fetchApi,
 };
